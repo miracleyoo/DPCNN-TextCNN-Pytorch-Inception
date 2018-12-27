@@ -1,5 +1,7 @@
 # coding: utf-8
 # Author: Miracle Yoo
+# E-mail: mirakuruyoo@gmail.com
+
 import torch
 
 
@@ -39,27 +41,17 @@ class Config(object):
         self.EMBEDDING_DIM      = 300
         self.VOCAB_SIZE         = 20029
         self.CHAR_SIZE          = 3403
-
-        # LSTM模型设置
-        self.LSTM_HID_SIZE      = 512
-        self.LSTM_LAYER_NUM     = 2
-        self.K_MAX_POOLING      = 1
+        self.NUM_ID_FEATURE_MAP = 250
 
         # TextCNN模型设置
         self.TITLE_DIM          = 512
         self.LINER_HID_SIZE     = 1409
-        self.KERNEL_SIZE        = [2, 3, 4, 5]
+        self.KERNEL_SIZE        = [2, 2, 3, 3, 4, 4, 5, 5, 7, 7]
         self.TITLE_EMBEDDING    = 256   # 仅用在TextCNNCos中
 
-        # DilaTextCNN模型设置
-        self.DILA_TITLE_DIM = 20
-
         # TextCNNInc模型设置
-        self.SIN_KER_SIZE = [1, 3]  # single convolution kernel
-        self.DOU_KER_SIZE = [(1, 3), (3, 5)]  # double convolution kernel
-
-        # TextCNNIncDeep模型设置
-        self.NUM_ID_FEATURE_MAP = 250
+        self.SIN_KER_SIZE = [1, 1, 3, 3]  # single convolution kernel
+        self.DOU_KER_SIZE = [(1, 3), (3, 5), (3, 3), (5, 5)]  # double convolution kernel
 
         # 模型融合
         self.MODEL_NAME_LIST    = ["TextCNNINC_CHAR_v5.pth", "TextLSTM_CHAR_v5.pth"]
