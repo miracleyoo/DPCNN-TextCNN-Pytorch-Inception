@@ -84,13 +84,15 @@ class TextCNNDeep(BasicModule):
             nn.Conv1d(opt.NUM_ID_FEATURE_MAP, opt.NUM_ID_FEATURE_MAP,
                       kernel_size=3, padding=1)
         )
-        self.blocks = []
-        len_last = len(opt.KERNEL_SIZE)
-        while len_last > 2:
-            self.blocks.append(ResnetBlock(opt.NUM_ID_FEATURE_MAP))
-            len_last //= 2
+        self.num_seq = len(opt.KERNEL_SIZE)
+        resnet_block_list = []
+        while (self.num_seq > 2):
+            resnet_block_list.append(ResnetBlock(opt.NUM_ID_FEATURE_MAP))
+            self.num_seq = self.num_seq // 2
+        self.resnet_layer = nn.Sequential(*resnet_block_list)
+
         self.fc = nn.Sequential(
-            nn.Linear(opt.NUM_ID_FEATURE_MAP*len_last, opt.NUM_CLASSES),
+            nn.Linear(opt.NUM_ID_FEATURE_MAP*self.num_seq, opt.NUM_CLASSES),
             nn.BatchNorm1d(opt.NUM_CLASSES),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
@@ -107,10 +109,7 @@ class TextCNNDeep(BasicModule):
         xp = self.change_dim_conv(xp)
         x = self.conv(x)
         x = x+xp
-        for block in self.blocks:
-            x1 = block(x)
-            x = list(block.children())[0](x)
-            x = x + x1
+        x= self.resnet_layer(x)
         x = x.view(self.opt.BATCH_SIZE, -1)
         x = self.fc(x)
         return x
